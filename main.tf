@@ -36,3 +36,23 @@ module "s3_bucket" {
   bucket_name = module.label.id
   tags        = module.label.tags
 }
+
+locals {
+  domain_name = "placeholder"
+}
+
+module "cloudfront_cdn" {
+  source = "./modules/cloudfront_cdn"
+
+  name_prefix = module.label.id
+  tags        = module.label.tags
+
+  bucket_name = module.s3_bucket.bucket_name
+  domain_name = local.domain_name
+
+  depends_on = [module.s3_bucket]
+}
+
+output "cdn_domain_name" {
+  value = "https://${module.cloudfront_cdn.domain_name}"
+}
