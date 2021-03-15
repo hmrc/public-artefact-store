@@ -15,3 +15,24 @@ terraform {
 provider "aws" {
   region = "eu-west-2"
 }
+
+module "label" {
+  source  = "cloudposse/label/terraform"
+  version = "0.5.1"
+
+  namespace = "mdtp"
+  stage     = terraform.workspace
+  name      = "public-artefact-store"
+
+  tags = {
+    env        = terraform.workspace
+    team       = "build-and-deploy"
+    managed-by = "https://github.com/hmrc/public-artefact-store"
+  }
+}
+
+module "s3_bucket" {
+  source      = "./modules/s3_bucket"
+  bucket_name = module.label.id
+  tags        = module.label.tags
+}
