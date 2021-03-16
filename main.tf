@@ -34,7 +34,8 @@ module "label" {
 module "s3_bucket" {
   source      = "./modules/s3_bucket"
   bucket_name = module.label.id
-  tags        = module.label.tags
+  tags        = merge(module.label.tags, { "data_sensitivity" : "low" })
+
 }
 
 locals {
@@ -47,10 +48,11 @@ module "cloudfront_cdn" {
   name_prefix = module.label.id
   tags        = module.label.tags
 
-  bucket_name = module.s3_bucket.bucket_name
-  domain_name = local.domain_name
+  cloudfront_access_identity_path = module.s3_bucket.cloudfront_access_identity_path
+  bucket_regional_domain_name     = module.s3_bucket.bucket_regional_domain_name
+  bucket_name                     = module.s3_bucket.bucket_name
 
-  depends_on = [module.s3_bucket]
+  domain_name = local.domain_name
 }
 
 output "cdn_domain_name" {

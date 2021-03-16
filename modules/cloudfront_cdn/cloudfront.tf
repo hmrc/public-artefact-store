@@ -4,11 +4,11 @@ resource "aws_cloudfront_distribution" "website" {
 
   //   origin is where CloudFront gets its content from.
   origin {
-    domain_name = data.aws_s3_bucket.website.bucket_regional_domain_name
+    domain_name = var.bucket_regional_domain_name
     origin_id   = var.domain_name
 
     s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
+      origin_access_identity = var.cloudfront_access_identity_path
     }
   }
 
