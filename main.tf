@@ -51,8 +51,6 @@ module "cloudfront_cdn" {
   cloudfront_access_identity_path = module.s3_bucket.cloudfront_access_identity_path
   bucket_regional_domain_name     = module.s3_bucket.bucket_regional_domain_name
   bucket_name                     = module.s3_bucket.bucket_name
-
-  domain_name = local.domain_name
 }
 
 output "cdn_domain_name" {

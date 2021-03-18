@@ -1,3 +1,7 @@
+locals {
+  s3_origin_id = "private-s3"
+}
+
 resource "aws_cloudfront_distribution" "website" {
 
   price_class = "PriceClass_100"
@@ -5,7 +9,7 @@ resource "aws_cloudfront_distribution" "website" {
   //   origin is where CloudFront gets its content from.
   origin {
     domain_name = var.bucket_regional_domain_name
-    origin_id   = var.domain_name
+    origin_id   = local.s3_origin_id
 
     s3_origin_config {
       origin_access_identity = var.cloudfront_access_identity_path
@@ -23,7 +27,7 @@ resource "aws_cloudfront_distribution" "website" {
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
     // This needs to match the `origin_id` above.
-    target_origin_id = var.domain_name
+    target_origin_id = local.s3_origin_id
     min_ttl          = 0
     default_ttl      = 86400
     max_ttl          = 31536000
