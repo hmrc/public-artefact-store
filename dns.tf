@@ -5,7 +5,7 @@ locals {
 }
 
 data "aws_secretsmanager_secret_version" "zone_id" {
-  secret_id = "/shared_secret/dns/${local.parent_domain}/zone-id"
+  secret_id = "/shared-secret/dns/${local.parent_domain}/zone-id"
 }
 
 resource "aws_route53_record" "website" {
