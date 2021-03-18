@@ -38,10 +38,6 @@ module "s3_bucket" {
 
 }
 
-locals {
-  domain_name = "placeholder"
-}
-
 module "cloudfront_cdn" {
   source = "./modules/cloudfront_cdn"
 
@@ -51,8 +47,4 @@ module "cloudfront_cdn" {
   cloudfront_access_identity_path = module.s3_bucket.cloudfront_access_identity_path
   bucket_regional_domain_name     = module.s3_bucket.bucket_regional_domain_name
   bucket_name                     = module.s3_bucket.bucket_name
-}
-
-output "cdn_domain_name" {
-  value = "https://${module.cloudfront_cdn.domain_name}"
 }
