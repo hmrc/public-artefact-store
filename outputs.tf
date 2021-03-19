@@ -3,5 +3,5 @@ output "cdn_domain_name" {
 }
 
 output "expected_domain_name" {
-  value = local.domain_name
+  value = "https://${local.domain_name}"
 }
