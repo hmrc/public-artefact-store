@@ -6,7 +6,7 @@ resource "aws_cloudfront_distribution" "website" {
 
   price_class = "PriceClass_100"
 
-  //   origin is where CloudFront gets its content from.
+  //origin is where CloudFront gets its content from.
   origin {
     domain_name = var.bucket_regional_domain_name
     origin_id   = local.s3_origin_id
@@ -40,7 +40,7 @@ resource "aws_cloudfront_distribution" "website" {
     }
   }
 
-  //  aliases = [var.domain_name]
+  aliases = [var.domain_name]
 
   restrictions {
     geo_restriction {
@@ -49,10 +49,10 @@ resource "aws_cloudfront_distribution" "website" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
-    //    acm_certificate_arn        = aws_acm_certificate.certificate.arn
-    //    minimum_protocol_version   = "TLSv1.2_2019"
-    //    ssl_support_method         = "sni-only"
+    cloudfront_default_certificate = false
+    acm_certificate_arn        = var.acm_certificate_arn
+    minimum_protocol_version   = "TLSv1.2_2019"
+    ssl_support_method         = "sni-only"
   }
 
   custom_error_response {
@@ -69,6 +69,5 @@ resource "aws_cloudfront_distribution" "website" {
     response_page_path    = "/404.html"
   }
 
-  //  depends_on = [aws_acm_certificate.certificate]
   tags = var.tags
 }
