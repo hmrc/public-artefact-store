@@ -1,21 +1,25 @@
 locals {
   environment_subdomain = terraform.workspace == "live" ? "" : "${terraform.workspace}."
-  parent_domain = "${local.environment_subdomain}artefacts.tax.service.gov.uk"
-  subdomain = "open"
+  domain_name           = "open.${local.environment_subdomain}artefacts.tax.service.gov.uk"
+  allowed_account_ids   = jsondecode(data.aws_secretsmanager_secret_version.webops_account_ids.secret_string)
 }
 
-data "aws_secretsmanager_secret_version" "zone_id" {
-  secret_id = "/shared-secret/dns/${local.parent_domain}/zone-id"
+data "aws_secretsmanager_secret_version" "webops_account_ids" {
+  secret_id = "/share-secret/${local.domain_name}/webops-account-ids"
 }
 
-resource "aws_route53_record" "website" {
-  name = local.subdomain
-  type = "A"
-  zone_id = data.aws_secretsmanager_secret_version.zone_id.secret_string
+module "share_domain_name" {
+  source              = "./modules/share_secret"
+  secret_name         = "/shared-secret/dns/open.lab03.artefacts.tax.service.gov.uk/domain_name"
+  secret_value        = module.cloudfront_cdn.domain_name
+  allowed_account_ids = local.allowed_account_ids
+  tags                = module.label.tags
+}
 
-  alias {
-    name = module.cloudfront_cdn.domain_name
-    zone_id = module.cloudfront_cdn.hosted_zone_id
-    evaluate_target_health = false
-  }
+module "share_zone_id" {
+  source              = "./modules/share_secret"
+  secret_name         = "/shared-secret/dns/open.lab03.artefacts.tax.service.gov.uk/zone_id"
+  secret_value        = module.cloudfront_cdn.hosted_zone_id
+  allowed_account_ids = local.allowed_account_ids
+  tags                = module.label.tags
 }
