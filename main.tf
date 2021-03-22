@@ -16,6 +16,11 @@ provider "aws" {
   region = "eu-west-2"
 }
 
+provider "aws" {
+  region = "us-east-1"
+  alias = "us_east_1"
+}
+
 module "label" {
   source  = "cloudposse/label/terraform"
   version = "0.5.1"
@@ -49,4 +54,9 @@ module "cloudfront_cdn" {
   bucket_name                     = module.s3_bucket.bucket_name
   domain_name                     = local.domain_name
   acm_certificate_arn             = aws_acm_certificate_validation.cert.certificate_arn
+
+  providers = {
+    aws           = aws
+    aws.us_east_1 = aws.us_east_1
+  }
 }

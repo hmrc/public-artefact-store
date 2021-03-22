@@ -2,7 +2,12 @@ locals {
   s3_origin_id = "private-s3"
 }
 
+provider "aws" {
+  alias = "us_east_1"
+}
+
 resource "aws_cloudfront_distribution" "website" {
+  provider = aws.us_east_1
 
   price_class = "PriceClass_100"
 
