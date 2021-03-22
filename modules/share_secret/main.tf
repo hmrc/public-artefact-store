@@ -8,6 +8,8 @@ resource "aws_secretsmanager_secret" "secret" {
   kms_key_id = local.cross_account ? aws_kms_key.secret_manager[0].arn : null
   tags       = var.tags
   policy     = local.cross_account ? data.aws_iam_policy_document.secret_policy[0].json : null
+
+  recovery_window_in_days = 0 //this allows recreation of the secret right away
 }
 
 data "aws_iam_policy_document" "secret_policy" {

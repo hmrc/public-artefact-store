@@ -55,9 +55,9 @@ resource "aws_cloudfront_distribution" "website" {
 
   viewer_certificate {
     cloudfront_default_certificate = false
-    acm_certificate_arn        = var.acm_certificate_arn
-    minimum_protocol_version   = "TLSv1.2_2019"
-    ssl_support_method         = "sni-only"
+    acm_certificate_arn            = var.acm_certificate_arn
+    minimum_protocol_version       = "TLSv1.2_2019"
+    ssl_support_method             = "sni-only"
   }
 
   custom_error_response {
