@@ -10,7 +10,7 @@ data "aws_secretsmanager_secret_version" "webops_account_ids" {
 
 module "share_domain_name" {
   source              = "./modules/share_secret"
-  secret_name         = "/shared-secret/dns/open.lab03.artefacts.tax.service.gov.uk/domain-name"
+  secret_name         = "/shared-secret/dns/${local.domain_name}/domain-name"
   secret_value        = module.cloudfront_cdn.domain_name
   allowed_account_ids = local.allowed_account_ids
   tags                = module.label.tags
@@ -18,7 +18,7 @@ module "share_domain_name" {
 
 module "share_zone_id" {
   source              = "./modules/share_secret"
-  secret_name         = "/shared-secret/dns/open.lab03.artefacts.tax.service.gov.uk/zone-id"
+  secret_name         = "/shared-secret/dns/${local.domain_name}/zone-id"
   secret_value        = module.cloudfront_cdn.hosted_zone_id
   allowed_account_ids = local.allowed_account_ids
   tags                = module.label.tags
@@ -39,7 +39,7 @@ resource "aws_acm_certificate_validation" "cert" {
 
 module "share_cert_validation_record" {
   source              = "./modules/share_secret"
-  secret_name         = "/shared-secret/dns/open.lab03.artefacts.tax.service.gov.uk/cert-validation-records"
+  secret_name         = "/shared-secret/dns/${local.domain_name}/cert-validation-records"
   secret_value        = jsonencode(aws_acm_certificate.cert.domain_validation_options)
   allowed_account_ids = local.allowed_account_ids
   tags                = module.label.tags
