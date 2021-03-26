@@ -45,11 +45,16 @@ resource "aws_iam_role" "lambda_role" {
 
 data "aws_iam_policy_document" "lambda_role" {
   statement {
-    principals {
-      identifiers = ["lambda.amazonaws.com"]
-      type        = "Service"
-    }
-    actions = ["sts:AssumeRole"]
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+
+    resources = [
+      "arn:aws:logs:*:*:*"
+    ]
   }
 }
 
