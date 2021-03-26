@@ -44,7 +44,7 @@ resource "aws_lambda_function" "lambda_edge" {
   function_name = var.name_prefix
   role          = aws_iam_role.lambda_role.arn
   filename      = data.archive_file.lambda_zip_inline.output_path
-  runtime       = "nodejs14.x"
+  runtime       = "nodejs12.x"
   handler       = "main.handler"
   tags          = var.tags
 }

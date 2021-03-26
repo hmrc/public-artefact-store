@@ -43,6 +43,11 @@ resource "aws_cloudfront_distribution" "website" {
         forward = "none"
       }
     }
+
+    lambda_function_association {
+      event_type = "origin-request"
+      lambda_arn = var.origin_request_trigger_lambda_arn
+    }
   }
 
   aliases = [var.domain_name]

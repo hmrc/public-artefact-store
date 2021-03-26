@@ -60,11 +60,12 @@ module "cloudfront_cdn" {
   name_prefix = module.label.id
   tags        = module.label.tags
 
-  cloudfront_access_identity_path = module.s3_bucket.cloudfront_access_identity_path
-  bucket_regional_domain_name     = module.s3_bucket.bucket_regional_domain_name
-  bucket_name                     = module.s3_bucket.bucket_name
-  domain_name                     = local.domain_name
-  acm_certificate_arn             = aws_acm_certificate_validation.cert.certificate_arn
+  cloudfront_access_identity_path   = module.s3_bucket.cloudfront_access_identity_path
+  bucket_regional_domain_name       = module.s3_bucket.bucket_regional_domain_name
+  bucket_name                       = module.s3_bucket.bucket_name
+  domain_name                       = local.domain_name
+  acm_certificate_arn               = aws_acm_certificate_validation.cert.certificate_arn
+  origin_request_trigger_lambda_arn = module.cloudfront_default_indexes.lambda_arn
 
   providers = {
     aws           = aws

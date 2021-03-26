@@ -13,6 +13,9 @@ variable "cloudfront_access_identity_path" {
 variable "acm_certificate_arn" {
   type = string
 }
+variable "origin_request_trigger_lambda_arn" {
+  type = string
+}
 variable "name_prefix" {
   type = string
 }
