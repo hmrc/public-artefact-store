@@ -8,7 +8,7 @@ terraform {
   }
 
   required_providers {
-    aws = "<= 3.16.0"
+    aws = "<= 3.34.0"
   }
 }
 
@@ -44,12 +44,12 @@ module "s3_bucket" {
 }
 
 module "cloudfront_default_indexes" {
-  source = "./modules/cloudfront_default_indexes"
+  source      = "./modules/cloudfront_default_indexes"
   name_prefix = module.label.id
-   providers = {
+  providers = {
     aws           = aws
     aws.us_east_1 = aws.us_east_1
-    
+
   }
 }
 
