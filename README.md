@@ -12,6 +12,10 @@ Some configuration may be specific to our use-case, however the bulk of this Ter
 
 ### Terraform initialisation
 - Use `make` with the `init_labs` or `init_live` target to ensure terraform is initialised correctly.
+- Connect to desired workspace `terraform workspace select MyWorkSpaceName`
+
+### Terraform contributing
+- Use `terraform fmt --recursive .` to format any changes you've made.
 
 ## License
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
