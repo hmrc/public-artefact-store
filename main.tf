@@ -43,6 +43,16 @@ module "s3_bucket" {
 
 }
 
+module "cloudfront_default_indexes" {
+  source = "./modules/cloudfront_default_indexes"
+  name_prefix = module.label.id
+   providers = {
+    aws           = aws
+    aws.us_east_1 = aws.us_east_1
+    
+  }
+}
+
 module "cloudfront_cdn" {
   source = "./modules/cloudfront_cdn"
 
@@ -59,4 +69,5 @@ module "cloudfront_cdn" {
     aws           = aws
     aws.us_east_1 = aws.us_east_1
   }
+
 }
