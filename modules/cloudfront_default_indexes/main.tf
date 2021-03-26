@@ -37,27 +37,6 @@ EOT
   }
 }
 
-
-resource "aws_iam_role" "lambda_role" {
-  name               = var.name_prefix
-  assume_role_policy = data.aws_iam_policy_document.lambda_role.json
-}
-
-data "aws_iam_policy_document" "lambda_role" {
-  statement {
-
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
-    ]
-
-    resources = [
-      "arn:aws:logs:*:*:*"
-    ]
-  }
-}
-
 resource "aws_lambda_function" "lambda_edge" {
   provider = aws.us_east_1
 
@@ -67,5 +46,6 @@ resource "aws_lambda_function" "lambda_edge" {
   filename      = data.archive_file.lambda_zip_inline.output_path
   runtime       = "nodejs14.x"
   handler       = "main.handler"
+  tags          = var.tags
 }
 
