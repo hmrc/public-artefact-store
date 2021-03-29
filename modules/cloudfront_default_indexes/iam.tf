@@ -20,11 +20,13 @@ data "aws_iam_policy_document" "main_assume_role" {
 data "aws_iam_policy_document" "allow_logging" {
   statement {
     actions = [
+      "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
     resources = [
-      aws_cloudwatch_log_group.origin_request_lambda_logs.arn
+      aws_cloudwatch_log_group.origin_request_lambda_logs.arn,
+      "${aws_cloudwatch_log_group.origin_request_lambda_logs.arn}:*"
     ]
   }
 }
