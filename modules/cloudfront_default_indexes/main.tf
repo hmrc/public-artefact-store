@@ -49,3 +49,11 @@ resource "aws_lambda_function" "lambda_edge" {
   tags          = var.tags
 }
 
+resource "aws_cloudwatch_log_group" "origin_request_lambda_logs" {
+  provider          = aws.us_east_1
+  name              = "/aws/lambda/${aws_lambda_function.lambda_edge.function_name}"
+  retention_in_days = 7
+  tags              = var.tags
+}
+
+

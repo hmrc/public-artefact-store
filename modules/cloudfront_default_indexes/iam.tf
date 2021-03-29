@@ -20,12 +20,11 @@ data "aws_iam_policy_document" "main_assume_role" {
 data "aws_iam_policy_document" "allow_logging" {
   statement {
     actions = [
-      "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
     resources = [
-      "arn:aws:logs:*:*:log-group:/aws/lambda/${aws_lambda_function.lambda_edge.function_name}:*"
+      aws_cloudwatch_log_group.origin_request_lambda_logs.arn
     ]
   }
 }
@@ -39,5 +38,4 @@ resource "aws_iam_role_policy_attachment" "allow_logging" {
   policy_arn = aws_iam_policy.allow_logging.arn
   role       = aws_iam_role.lambda_role.name
 }
-
 
