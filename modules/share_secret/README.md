@@ -1,3 +1,5 @@
+This module should work with TF12+
+
 ## How to use this module
 
 ```hcl
@@ -6,7 +8,7 @@ module "share_zone_id" {
 
  secret_name  = "/example-name"
 
- secret_value = module.cloudfront_cdn.hosted_zone_id
+ secret_value = "example-value"
 
  allowed_account_ids = [
    327423472347234,
