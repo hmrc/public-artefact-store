@@ -73,3 +73,10 @@ module "cloudfront_cdn" {
   }
 
 }
+
+module "share_cloudfront_distribution_id" {
+  source       = "./modules/share_secret"
+  secret_name  = "/shared-secret/${local.domain_name}/cloudfront_distribution_id"
+  secret_value = module.cloudfront_cdn.cloudfront_distribution_id
+  tags         = module.label.tags
+}
