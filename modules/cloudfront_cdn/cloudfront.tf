@@ -79,5 +79,9 @@ resource "aws_cloudfront_distribution" "website" {
     response_page_path    = "/404.html"
   }
 
+  logging_config {
+    bucket = module.cloudfront-logs.this_s3_bucket.bucket_domain_name
+  }
+
   tags = var.tags
 }
