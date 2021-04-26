@@ -41,7 +41,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "query": "SOURCE '${module.cloudfront-logs.logs_cloudwatch_log_group.name}' | ${aws_cloudwatch_query_definition.top_requested_files.query_string}",
                 "region": "eu-west-2",
                 "stacked": false,
-                "view": "pie",
+                "view": "bar",
                 "title": "Top 10 File Requests"
             }
         },
