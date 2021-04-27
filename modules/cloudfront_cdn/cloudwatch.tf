@@ -2,7 +2,8 @@ resource "aws_cloudwatch_dashboard" "main" {
   dashboard_name = local.aws_resource_safe_domain_name
 
   dashboard_body = jsonencode({
-    "widgets" : [
+    start : "-PT720H",
+    widgets : [
       {
         height : 6,
         width : 9,
@@ -10,11 +11,11 @@ resource "aws_cloudwatch_dashboard" "main" {
         x : 0,
         type : "log",
         properties : {
-          "query" : "SOURCE '${module.cloudfront-logs.logs_cloudwatch_log_group.name}' | ${aws_cloudwatch_query_definition.request_status_codes.query_string}",
-          "region" : "eu-west-2",
-          "stacked" : false,
-          "view" : "pie",
-          "title" : "Request Status Codes"
+          query : "SOURCE '${module.cloudfront-logs.logs_cloudwatch_log_group.name}' | ${aws_cloudwatch_query_definition.request_status_codes.query_string}",
+          region : "eu-west-2",
+          stacked : false,
+          view : "pie",
+          title : "Request Status Codes"
         }
       },
       {
@@ -52,11 +53,11 @@ resource "aws_cloudwatch_dashboard" "main" {
         x : 18,
         type : "log",
         properties : {
-          "query" : "SOURCE '${module.cloudfront-logs.logs_cloudwatch_log_group.name}' | ${aws_cloudwatch_query_definition.request_count_by_ip.query_string}",
-          "region" : "eu-west-2",
-          "stacked" : false,
-          "view" : "table",
-          "title" : "Request count by IP"
+          query : "SOURCE '${module.cloudfront-logs.logs_cloudwatch_log_group.name}' | ${aws_cloudwatch_query_definition.request_count_by_ip.query_string}",
+          region : "eu-west-2",
+          stacked : false,
+          view : "table",
+          title : "Request count by IP"
         }
       }
     ]
