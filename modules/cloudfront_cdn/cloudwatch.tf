@@ -2,6 +2,7 @@ resource "aws_cloudwatch_dashboard" "main" {
   dashboard_name = local.aws_resource_safe_domain_name
 
   dashboard_body = jsonencode({
+    "start": "-PT720H",
     "widgets": [
         {
             "height": 6,
