@@ -7,6 +7,9 @@ variable "bucket_name" {
 variable "domain_name" {
   type = string
 }
+variable "web_acl_arn" {
+  type = string
+}
 variable "cloudfront_access_identity_path" {
   type = string
 }

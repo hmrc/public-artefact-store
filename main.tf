@@ -54,12 +54,25 @@ module "cloudfront_default_indexes" {
   }
 }
 
+module "cloudfront_waf" {
+  source = "./modules/cloudfront_waf"
+
+  name_prefix = module.label.id
+  tags        = module.label.tags
+
+  providers = {
+    aws           = aws
+    aws.us_east_1 = aws.us_east_1
+  }
+}
+
 module "cloudfront_cdn" {
   source = "./modules/cloudfront_cdn"
 
   name_prefix = module.label.id
   tags        = module.label.tags
 
+  web_acl_arn                       = module.cloudfront_waf.web_acl_arn
   cloudfront_access_identity_path   = module.s3_bucket.cloudfront_access_identity_path
   bucket_regional_domain_name       = module.s3_bucket.bucket_regional_domain_name
   bucket_name                       = module.s3_bucket.bucket_name

@@ -21,6 +21,8 @@ resource "aws_cloudfront_distribution" "website" {
     }
   }
 
+  web_acl_id = var.web_acl_arn #yes this takes an arn despite the name id :(
+
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
