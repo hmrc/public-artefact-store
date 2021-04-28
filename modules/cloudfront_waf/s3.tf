@@ -34,13 +34,16 @@ resource "aws_s3_bucket_public_access_block" "waf_acl_log" {
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket     = aws_s3_bucket.waf_acl_log.bucket
-  policy     = data.aws_iam_policy_document.bucket_iam_policy.json
-  depends_on = [aws_s3_bucket.waf_acl_log]
+  bucket = aws_s3_bucket.waf_acl_log.bucket
+  policy = data.aws_iam_policy_document.bucket_iam_policy.json
+
+  depends_on = [
+    aws_s3_bucket.waf_acl_log,
+    aws_s3_bucket_public_access_block.waf_acl_log
+  ]
 }
 
 data "aws_iam_policy_document" "bucket_iam_policy" {
-
   statement {
     sid    = "AllowDDoSResponseTeamAccess"
     effect = "Allow"
