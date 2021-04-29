@@ -87,6 +87,16 @@ module "cloudfront_cdn" {
 
 }
 
+module "cloudfront_shield" {
+  source = "./modules/cloudfront_shield"
+
+  name_prefix = module.label.id
+  tags        = module.label.tags
+
+  cloudfront_distribution_arn = module.cloudfront_cdn.cloudfront_distribution_arn
+  domain_name                 = local.domain_name
+}
+
 module "share_cloudfront_distribution_id" {
   source       = "./modules/share_secret"
   secret_name  = "/shared-secret/${local.domain_name}/cloudfront_distribution_id"
