@@ -9,9 +9,9 @@ locals {
 
 resource "aws_secretsmanager_secret" "secret" {
   name       = var.secret_name
-  kms_key_id = local.cross_account ? aws_kms_key.secret_manager[0].arn : null
+  kms_key_id = local.cross_account ? one(aws_kms_key.secret_manager).arn : null
   tags       = var.tags
-  policy     = local.cross_account ? data.aws_iam_policy_document.secret_policy[0].json : null
+  policy     = local.cross_account ? one(data.aws_iam_policy_document.secret_policy).json : null
 
   recovery_window_in_days = 0 //this allows recreation of the secret right away
 }
@@ -44,7 +44,7 @@ resource "aws_kms_key" "secret_manager" {
   count                   = local.cross_account ? 1 : 0
   description             = "secrets manager ${var.secret_name}"
   deletion_window_in_days = 7
-  policy                  = data.aws_iam_policy_document.kms_policy[0].json
+  policy                  = one(data.aws_iam_policy_document.kms_policy).json
   tags                    = var.tags
 }
 
