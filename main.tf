@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 0.14.3"
+  required_version = "~> 0.15.1"
 
   backend "s3" {
     key            = "public-artefact-store/v1/state"
@@ -23,7 +23,7 @@ provider "aws" {
 
 module "label" {
   source  = "cloudposse/label/terraform"
-  version = "0.5.1"
+  version = "0.8.0"
 
   namespace = "mdtp"
   stage     = terraform.workspace

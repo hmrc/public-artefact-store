@@ -1,3 +1,7 @@
+terraform {
+  required_version = "~> 0.15.1"
+}
+
 locals {
   cross_account        = length(var.allowed_account_ids) == 0 ? false : true
   allowed_account_arns = formatlist("arn:aws:iam::%s:root", var.allowed_account_ids)

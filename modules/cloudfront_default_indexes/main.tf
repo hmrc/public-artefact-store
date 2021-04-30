@@ -1,5 +1,11 @@
-provider "aws" {
-  alias = "us_east_1"
+terraform {
+  required_providers {
+    aws = {
+      source                = "hashicorp/aws"
+      version               = ">= 3.37.0"
+      configuration_aliases = [aws.us_east_1]
+    }
+  }
 }
 
 //taken from aws blog post recommend solution
