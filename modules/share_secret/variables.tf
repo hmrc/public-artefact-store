@@ -9,6 +9,7 @@ variable "allowed_account_ids" {
   default = []
 }
 variable "tags" {
-  type = map(string)
+  type    = map(string)
+  default = {}
 }
 
