@@ -8,7 +8,12 @@ module "bucket" {
   read_roles          = [aws_iam_role.firehose_role.arn]
   write_roles         = [aws_iam_role.firehose_role.arn]
   metadata_read_roles = []
-  admin_roles         = []
+  admin_roles = [
+    "arn:aws:iam::893174414079:role/RoleBuildEngineer",
+    "arn:aws:iam::893174414079:role/MDTPBuildCodeBuild",
+    "arn:aws:iam::565237821078:role/RoleBuildEngineer",
+    "arn:aws:iam::565237821078:role/MDTPBuildCodeBuild",
+  ]
 
   read_services = ["drt.shield.amazonaws.com"]
   list_services = ["drt.shield.amazonaws.com"]
