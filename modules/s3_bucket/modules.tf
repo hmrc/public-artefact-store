@@ -9,15 +9,7 @@ module "bucket" {
     aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn,
     local.build_and_deploy_api_lambda_role
   ]
-  write_roles = [
-    local.build_and_deploy_api_lambda_role
-  ]
-  admin_roles = [
-    "arn:aws:iam::893174414079:role/RoleBuildEngineer",
-    "arn:aws:iam::893174414079:role/MDTPBuildCodeBuild",
-    "arn:aws:iam::565237821078:role/RoleBuildEngineer",
-    "arn:aws:iam::565237821078:role/MDTPBuildCodeBuild",
-  ]
+  write_roles = [local.build_and_deploy_api_lambda_role]
 
   data_expiry      = "forever-config-only"
   data_sensitivity = "low"
