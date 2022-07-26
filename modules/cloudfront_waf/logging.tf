@@ -15,7 +15,7 @@ resource "aws_kinesis_firehose_delivery_stream" "waf_acl" {
 
   s3_configuration {
     role_arn           = aws_iam_role.firehose_role.arn
-    bucket_arn         = module.bucket.arn
+    bucket_arn         = aws_s3_bucket.waf_acl_log.arn
     compression_format = "GZIP"
   }
 }
