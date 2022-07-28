@@ -1,7 +1,7 @@
 resource "aws_shield_protection" "website" {
   name         = var.name_prefix
   resource_arn = var.cloudfront_distribution_arn
-  tags = var.tags
+  tags         = var.tags
 }
 
 # associate-health-check is not yet supported by terraform...yet
