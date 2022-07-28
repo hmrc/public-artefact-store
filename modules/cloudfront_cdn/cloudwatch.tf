@@ -121,3 +121,17 @@ fields `x-edge-location` as edge_location
 | sort location desc
 EOF
 }
+
+resource "aws_cloudwatch_metric_alarm" "lambda_invocations" {
+  alarm_name          = "logging-lambda-invocations-warning"
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = "2"
+  period              = "900"
+  threshold           = "2"
+  metric_name         = "Invocations"
+  namespace           = "AWS/Lambda"
+  statistic           = "Sum"
+  dimensions = {
+    FunctionName = module.cloudfront-logs.this_lambda_function.function_name
+  }
+}
