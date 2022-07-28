@@ -123,12 +123,26 @@ EOF
 }
 
 resource "aws_cloudwatch_metric_alarm" "lambda_invocations" {
-  alarm_name          = "logging-lambda-invocations-warning"
+  alarm_name          = "${terraform.workspace}-open-artefacts-logging-lambda-invocations-warning"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "2"
   period              = "900"
   threshold           = "2"
   metric_name         = "Invocations"
+  namespace           = "AWS/Lambda"
+  statistic           = "Sum"
+  dimensions = {
+    FunctionName = module.cloudfront-logs.this_lambda_function.function_name
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
+  alarm_name          = "${terraform.workspace}-open-artefacts-logging-lambda-errors-warning"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "1"
+  period              = "900"
+  threshold           = "1"
+  metric_name         = "Errors"
   namespace           = "AWS/Lambda"
   statistic           = "Sum"
   dimensions = {
