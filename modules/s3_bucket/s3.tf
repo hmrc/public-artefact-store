@@ -6,34 +6,25 @@ resource "aws_s3_bucket_public_access_block" "website" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket" "website" {
-  bucket = var.bucket_name
-  acl    = "private"
+locals {
+  account_name = terraform.workspace == "live" ? terraform.workspace : "labs"
+}
 
+module "bucket" {
+  source      = "git@github.com:hmrc/terraform-aws-s3-bucket-core?ref=1.2.0"
+  bucket_name = var.bucket_name
+
+  log_bucket_id    = "build-${local.account_name}-access-logs"
+  data_sensitivity = "low"
+  force_destroy    = true
+  data_expiry      = "forever-config-only"
+  kms_key_policy   = ""
   tags = var.tags
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
-  versioning {
-    enabled = true
-  }
-
-  lifecycle_rule {
-    enabled = false
-    noncurrent_version_expiration {
-      days = 90
-    }
-  }
+  use_default_encryption = true
 }
 
 resource "aws_s3_bucket_policy" "public_read_for_get_bucket_objects" {
-  bucket = aws_s3_bucket.website.bucket
+  bucket = module.bucket.id
   policy = data.aws_iam_policy_document.public_read_for_get_bucket_objects.json
 }
 
@@ -54,7 +45,25 @@ data "aws_iam_policy_document" "public_read_for_get_bucket_objects" {
       "s3:GetObject"
     ]
     resources = [
-      "${aws_s3_bucket.website.arn}/*"
+      "${module.bucket.arn}/*"
     ]
   }
+  statement {
+    sid = "DenyInsecureTransport"
+    effect = "Deny"
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    actions = ["s3:*"]
+    resources = [
+                "${module.bucket.arn}/*",
+                "${module.bucket.arn}"
+            ]
+    condition {
+              test = "Bool"
+              variable = "aws:SecureTransport"
+              values = ["false"]
+            }
+        }
 }
