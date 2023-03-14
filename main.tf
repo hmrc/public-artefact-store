@@ -97,9 +97,14 @@ module "cloudfront_shield" {
   domain_name                 = local.domain_name
 }
 
+data "aws_secretsmanager_secret_version" "build_account_ids" {
+  secret_id = "/share-secret/build-account-ids"
+}
+
 module "share_cloudfront_distribution_id" {
-  source       = "./modules/share_secret"
-  secret_name  = "/shared-secret/${local.domain_name}/cloudfront_distribution_id"
-  secret_value = module.cloudfront_cdn.cloudfront_distribution_id
-  tags         = module.label.tags
+  source              = "./modules/share_secret"
+  secret_name         = "/shared-secret/${local.domain_name}/cloudfront_distribution_id"
+  secret_value        = module.cloudfront_cdn.cloudfront_distribution_id
+  tags                = module.label.tags
+  allowed_account_ids = jsondecode(data.aws_secretsmanager_secret_version.build_account_ids.secret_string)
 }
