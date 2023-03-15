@@ -48,6 +48,12 @@ resource "aws_kms_key" "secret_manager" {
   tags                    = var.tags
 }
 
+resource "aws_kms_alias" "secret_manager" {
+  count         = local.cross_account ? 1 : 0
+  name          = replace("alias${var.secret_name}", ".", "-")
+  target_key_id = aws_kms_key.secret_manager[0].key_id
+}
+
 data "aws_caller_identity" "current" {}
 
 
