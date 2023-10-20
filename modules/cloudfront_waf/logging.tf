@@ -7,13 +7,13 @@ resource "aws_wafv2_web_acl_logging_configuration" "waf_acl" {
 resource "aws_kinesis_firehose_delivery_stream" "waf_acl" {
   provider    = aws.us_east_1
   name        = "aws-waf-logs-${var.name_prefix}"
-  destination = "s3"
+  destination = "extended_s3"
 
   server_side_encryption {
     enabled = true
   }
 
-  s3_configuration {
+  extended_s3_configuration {
     role_arn           = aws_iam_role.firehose_role.arn
     bucket_arn         = aws_s3_bucket.waf_acl_log.arn
     compression_format = "GZIP"
