@@ -1,6 +1,6 @@
 module "cloudfront-logs" {
   source      = "fmasuhr/cloudfront-logs/aws"
-  version     = "1.5.0"
+  version     = "1.6.2"
   bucket_name = "${local.aws_resource_safe_domain_name}-access-logs"
   name        = "${local.aws_resource_safe_domain_name}-access-logs"
   retention   = 365
