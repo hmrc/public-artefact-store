@@ -1,4 +1,4 @@
-resource "aws_s3_bucket_object" "error_file_404" {
+resource "aws_s3_object" "error_file_404" {
   bucket = var.bucket_name
   key    = "404.html"
 

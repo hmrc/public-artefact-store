@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 0.15.1"
+  required_version = "~> 1.9.7"
 
   backend "s3" {
     key            = "public-artefact-store/v1/state"
@@ -8,7 +8,7 @@ terraform {
   }
 
   required_providers {
-    aws = ">= 4.22.0"
+    aws = ">= 5.22.0"
   }
 }
 
@@ -78,7 +78,7 @@ module "cloudfront_cdn" {
   bucket_name                       = module.s3_bucket.bucket_name
   domain_name                       = local.domain_name
   acm_certificate_arn               = aws_acm_certificate_validation.cert.certificate_arn
-  origin_request_trigger_lambda_arn = module.cloudfront_default_indexes.lambda_arn
+  viewer_request_function_arn       = module.cloudfront_default_indexes.function_arn
 
   providers = {
     aws           = aws
