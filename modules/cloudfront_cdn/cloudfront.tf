@@ -42,9 +42,9 @@ resource "aws_cloudfront_distribution" "website" {
       }
     }
 
-    lambda_function_association {
-      event_type = "origin-request"
-      lambda_arn = var.origin_request_trigger_lambda_arn
+    function_association {
+      event_type = "viewer-request"
+      function_arn = var.viewer_request_function_arn
     }
   }
 
