@@ -3,9 +3,12 @@ terraform {
 }
 
 locals {
-  cross_account        = length(var.allowed_account_ids) == 0 ? false : true
+  cross_account        = length(var.allowed_account_ids) > 0 ? true : false
   allowed_account_arns = formatlist("arn:aws:iam::%s:root", var.allowed_account_ids)
+  cross_account_policy_document = local.cross_account ? one(data.aws_iam_policy_document.cross_account).json : ""
 }
+
+data "aws_caller_identity" "current" {}
 
 resource "aws_secretsmanager_secret" "secret" {
   name       = var.secret_name
@@ -44,7 +47,7 @@ resource "aws_kms_key" "secret_manager" {
   count                   = local.cross_account ? 1 : 0
   description             = "secrets manager ${var.secret_name}"
   deletion_window_in_days = 7
-  policy                  = one(data.aws_iam_policy_document.kms_policy).json
+  policy                  = data.aws_iam_policy_document.kms_policy.json
   tags                    = var.tags
 }
 
@@ -54,14 +57,18 @@ resource "aws_kms_alias" "secret_manager" {
   target_key_id = aws_kms_key.secret_manager[0].key_id
 }
 
-data "aws_caller_identity" "current" {}
-
-
 data "aws_iam_policy_document" "kms_policy" {
-  count   = local.cross_account ? 1 : 0
+  source_policy_documents = [
+    data.aws_iam_policy_document.kms_policy_default.json,
+    local.cross_account_policy_document,
+  ]
+  override_policy_documents = var.override_policy_documents
+}
+
+data "aws_iam_policy_document" "kms_policy_default" {
   version = "2012-10-17"
   statement {
-    sid    = "KeyManagement"
+    sid    = "AllowAccessForUsers"
     effect = "Allow"
     principals {
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
@@ -74,8 +81,12 @@ data "aws_iam_policy_document" "kms_policy" {
       "*"
     ]
   }
+}
+
+data "aws_iam_policy_document" "cross_account" {
+  count   = local.cross_account ? 1 : 0
   statement {
-    sid    = "AllowDecrypt"
+    sid    = "AllowCrossAccountDecrypt"
     effect = "Allow"
     principals {
       identifiers = local.allowed_account_arns

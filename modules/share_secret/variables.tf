@@ -12,4 +12,8 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
-
+variable "override_policy_documents" {
+  type    = list(string)
+  description = "List of IAM policy documents to merge. Overrides statements with the same sid."
+  default = null
+}
