@@ -42,10 +42,14 @@ Some configuration may be specific to our use-case, however the bulk of this Ter
 - Create a private S3 bucket and Dynamodb table to store you Terraform state and update the `Makefile` to reflect this
 - You must enable a AWS shield advanced subscription manually on the account you would like to apply to. [Link to doc](https://docs.aws.amazon.com/waf/latest/developerguide/enable-ddos-prem.html)
 
-### Terraform initialisation
+### Terraform
 
-- Use `make` with the `init_labs` or `init_live` target to ensure terraform is initialised correctly.
-- Connect to desired workspace `terraform workspace select MyWorkSpaceName`
+- To plan and apply in labs;
+     - `aws-vault exec build-labs-RoleBuildEngineer -- task plantf-lab03`
+     - `aws-vault exec build-labs-RoleBuildEngineer -- task applytf-lab03`
+- in live;
+     - `aws-vault exec build-live-RoleBuildEngineer -- task plantf-live`
+     - `aws-vault exec build-live-RoleBuildEngineer -- task applytf-live`
 
 ### Terraform contributing
 

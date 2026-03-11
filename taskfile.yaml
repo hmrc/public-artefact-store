@@ -1,0 +1,73 @@
+version: '3'
+
+tasks:
+  clean:
+    cmds:
+      - rm -rf .terraform
+    ignore_error: true
+
+  clear_env:
+    cmds:
+      - rm .env
+    ignore_error: true
+
+  init-lab03:
+    desc: Runs terraform init for lab03
+    cmds:
+      - task: init
+        vars:
+          WORKSPACE: lab03
+          BUCKET_ENV: labs
+      
+
+  init-live:
+    desc: Runs terraform init for live
+    cmds:
+      - task: init
+        vars:
+          WORKSPACE: live
+          BUCKET_ENV: live
+
+  init:
+    dotenv: ['.env']
+    requires:
+      vars:
+        - name: WORKSPACE
+          enum: [lab03, live]
+        - name: BUCKET_ENV
+          enum: [labs, live]
+    cmds:
+      - task: clean
+      - terraform init -backend-config="bucket=mdtp-terraform-public-artefact-store-{{ .BUCKET_ENV }}"
+      - terraform workspace select {{ .WORKSPACE }}
+
+  plantf-*:
+    desc: Runs a terraform plan (lab03 or live)
+    dotenv: ['.env']
+    vars:
+      PLANENV: '{{index .MATCH 0}}'
+    cmds:
+      - task: clear_env
+      - task: init-{{ .PLANENV }}
+      - task: run-plan
+
+  applytf-*:
+    desc: Runs a terraform plan/apply (lab03/live)
+    dotenv: ['.env']
+    vars:
+      APPLYENV: '{{index .MATCH 0}}'
+    cmds:
+      - task: plantf-{{ .APPLYENV }}
+      - task: run-apply
+      - task: clear_env
+
+  run-plan:
+    dotenv: ['.env']
+    cmds:
+      - terraform plan -out=$TF_ENV-terraform.plan -lock-timeout=30s
+
+  run-apply:
+    dotenv: ['.env']
+    cmds:
+      - terraform apply $TF_ENV-terraform.plan
+      - rm $TF_ENV-terraform.plan
