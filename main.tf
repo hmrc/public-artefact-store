@@ -4,11 +4,11 @@ terraform {
   backend "s3" {
     key            = "public-artefact-store/v1/state"
     region         = "eu-west-2"
-    dynamodb_table = "mdtp-terraform-public-artefact-store"
+    use_lockfile   = true
   }
 
   required_providers {
-    aws = ">= 5.22.0"
+    aws = ">= 6.37.0"
   }
 }
 
