@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.9.7"
+  required_version = "~> 1.14.8"
 
   backend "s3" {
     key            = "public-artefact-store/v1/state"

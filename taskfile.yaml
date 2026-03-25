@@ -49,7 +49,7 @@ tasks:
     cmds:
       - task: clear_env
       - task: init-{{ .PLANENV }}
-      - task: run-plan
+      - terraform plan -out={{ .PLANENV }}-terraform.plan -lock-timeout=30s
 
   applytf-*:
     desc: Runs a terraform plan/apply (lab03/live)
@@ -58,16 +58,6 @@ tasks:
       APPLYENV: '{{index .MATCH 0}}'
     cmds:
       - task: plantf-{{ .APPLYENV }}
-      - task: run-apply
+      - terraform apply {{ .APPLYENV }}-terraform.plan
+      - rm {{ .APPLYENV }}-terraform.plan
       - task: clear_env
-
-  run-plan:
-    dotenv: ['.env']
-    cmds:
-      - terraform plan -out=$TF_ENV-terraform.plan -lock-timeout=30s
-
-  run-apply:
-    dotenv: ['.env']
-    cmds:
-      - terraform apply $TF_ENV-terraform.plan
-      - rm $TF_ENV-terraform.plan
