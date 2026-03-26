@@ -9,8 +9,13 @@ terraform {
 
   required_providers {
     aws = ">= 6.37.0"
+    archive = {
+      source  = "hashicorp/archive"
+      version = "2.7.1"
+    }
   }
 }
+
 
 provider "aws" {
   region = "eu-west-2"

@@ -1,3 +1,33 @@
+resource "aws_cloudwatch_log_group" "cloudfront_access_logs_log_group" {
+  name              = "${local.aws_resource_safe_domain_name}-access-logs"
+  retention_in_days = 365
+  tags              = var.tags
+}
+
+resource "aws_cloudwatch_log_delivery_source" "cloudfront_access_logs_delivery_source" {
+  region       = "us-east-1"
+  name         = "${local.aws_resource_safe_domain_name}-access-logs-src"
+  log_type     = "ACCESS_LOGS"
+  resource_arn = aws_cloudfront_distribution.website.arn
+}
+
+resource "aws_cloudwatch_log_delivery_destination" "cloudfront_access_logs_delivery_destination" {
+  region        = "us-east-1"
+  name          = "${local.aws_resource_safe_domain_name}-access-logs-dst"
+  output_format = "json"
+
+  delivery_destination_configuration {
+    destination_resource_arn = aws_cloudwatch_log_group.cloudfront_access_logs_log_group.arn
+  }
+}
+
+resource "aws_cloudwatch_log_delivery" "cloudfront_access_logs_delivery" {
+  region                   = "us-east-1"
+  delivery_source_name     = aws_cloudwatch_log_delivery_source.cloudfront_access_logs_delivery_source.name
+  delivery_destination_arn = aws_cloudwatch_log_delivery_destination.cloudfront_access_logs_delivery_destination.arn
+}
+
+
 resource "aws_cloudwatch_dashboard" "main" {
   dashboard_name = local.aws_resource_safe_domain_name
 
@@ -11,7 +41,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         x : 0,
         type : "log",
         properties : {
-          query : "SOURCE '${module.cloudfront-logs.logs_cloudwatch_log_group.name}' | ${aws_cloudwatch_query_definition.request_status_codes.query_string}",
+          query : "SOURCE '${aws_cloudwatch_log_group.cloudfront_access_logs_log_group.name}' | ${aws_cloudwatch_query_definition.request_status_codes.query_string}",
           region : "eu-west-2",
           stacked : false,
           view : "pie",
@@ -25,7 +55,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         x : 9,
         type : "log",
         properties : {
-          "query" : "SOURCE '${module.cloudfront-logs.logs_cloudwatch_log_group.name}' | ${aws_cloudwatch_query_definition.requests_by_edge_location.query_string}",
+          "query" : "SOURCE '${aws_cloudwatch_log_group.cloudfront_access_logs_log_group.name}' | ${aws_cloudwatch_query_definition.requests_by_edge_location.query_string}",
           "region" : "eu-west-2",
           "stacked" : false,
           "view" : "pie",
@@ -39,7 +69,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         x : 0,
         type : "log",
         properties : {
-          "query" : "SOURCE '${module.cloudfront-logs.logs_cloudwatch_log_group.name}' | ${aws_cloudwatch_query_definition.top_requested_files.query_string}",
+          "query" : "SOURCE '${aws_cloudwatch_log_group.cloudfront_access_logs_log_group.name}' | ${aws_cloudwatch_query_definition.top_requested_files.query_string}",
           "region" : "eu-west-2",
           "stacked" : false,
           "view" : "bar",
@@ -53,7 +83,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         x : 18,
         type : "log",
         properties : {
-          query : "SOURCE '${module.cloudfront-logs.logs_cloudwatch_log_group.name}' | ${aws_cloudwatch_query_definition.request_count_by_ip.query_string}",
+          query : "SOURCE '${aws_cloudwatch_log_group.cloudfront_access_logs_log_group.name}' | ${aws_cloudwatch_query_definition.request_count_by_ip.query_string}",
           region : "eu-west-2",
           stacked : false,
           view : "table",
@@ -68,7 +98,7 @@ resource "aws_cloudwatch_query_definition" "request_status_codes" {
   name = "${local.aws_resource_safe_domain_name}/request-status-codes"
 
   log_group_names = [
-    module.cloudfront-logs.logs_cloudwatch_log_group.name
+    aws_cloudwatch_log_group.cloudfront_access_logs_log_group.name
   ]
 
   query_string = <<EOF
@@ -82,7 +112,7 @@ resource "aws_cloudwatch_query_definition" "top_requested_files" {
   name = "${local.aws_resource_safe_domain_name}/top-requested-files"
 
   log_group_names = [
-    module.cloudfront-logs.logs_cloudwatch_log_group.name
+    aws_cloudwatch_log_group.cloudfront_access_logs_log_group.name
   ]
 
   query_string = <<EOF
@@ -98,7 +128,7 @@ resource "aws_cloudwatch_query_definition" "request_count_by_ip" {
   name = "${local.aws_resource_safe_domain_name}/request-count-by-ip"
 
   log_group_names = [
-    module.cloudfront-logs.logs_cloudwatch_log_group.name
+    aws_cloudwatch_log_group.cloudfront_access_logs_log_group.name
   ]
 
   query_string = <<EOF
@@ -112,7 +142,7 @@ resource "aws_cloudwatch_query_definition" "requests_by_edge_location" {
   name = "${local.aws_resource_safe_domain_name}/requests-by-edge-location"
 
   log_group_names = [
-    module.cloudfront-logs.logs_cloudwatch_log_group.name
+    aws_cloudwatch_log_group.cloudfront_access_logs_log_group.name
   ]
 
   query_string = <<EOF
@@ -120,32 +150,4 @@ fields `x-edge-location` as edge_location
 | stats count (edge_location) as location by edge_location
 | sort location desc
 EOF
-}
-
-resource "aws_cloudwatch_metric_alarm" "lambda_invocations" {
-  alarm_name          = "${terraform.workspace}-open-artefacts-logging-lambda-invocations-warning"
-  comparison_operator = "LessThanThreshold"
-  evaluation_periods  = "2"
-  period              = "900"
-  threshold           = "2"
-  metric_name         = "Invocations"
-  namespace           = "AWS/Lambda"
-  statistic           = "Sum"
-  dimensions = {
-    FunctionName = module.cloudfront-logs.this_lambda_function.function_name
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
-  alarm_name          = "${terraform.workspace}-open-artefacts-logging-lambda-errors-warning"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = "1"
-  period              = "900"
-  threshold           = "1"
-  metric_name         = "Errors"
-  namespace           = "AWS/Lambda"
-  statistic           = "Sum"
-  dimensions = {
-    FunctionName = module.cloudfront-logs.this_lambda_function.function_name
-  }
 }
