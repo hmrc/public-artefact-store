@@ -1,29 +1,49 @@
 resource "aws_s3_bucket" "waf_acl_log" {
   bucket = "${var.name_prefix}-waf-acl-logs"
-  acl    = "private"
   tags   = var.tags
+}
 
-  lifecycle_rule {
-    enabled = true
-    id      = "DeleteOldLogs"
+resource "aws_s3_bucket_ownership_controls" "waf_acl_log_bucket_ownership_controls" {
+  bucket = aws_s3_bucket.waf_acl_log.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "waf_acl_log_bucket_acl" {
+  depends_on = [aws_s3_bucket_ownership_controls.waf_acl_log_bucket_ownership_controls]
+  bucket = aws_s3_bucket.waf_acl_log.id
+  acl   = "private"
+}
+
+resource "aws_s3_bucket_versioning" "waf_acl_log_bucket_versioning" {
+  bucket = aws_s3_bucket.waf_acl_log.id
+  versioning_configuration {
+    status = "Suspended"
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "waf_acl_log_lifecycle" {
+  bucket = aws_s3_bucket.waf_acl_log.bucket
+  rule {
+    status = "Enabled"
+    id     = "DeleteOldLogs"
     expiration {
       days = 30
     }
   }
+}
 
-  versioning {
-    enabled = false
-  }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm     = "aws:kms"
-        kms_master_key_id = aws_kms_key.waf_acl.id
-      }
+resource "aws_s3_bucket_server_side_encryption_configuration" "waf_acl_log_bucket_sse" {
+  bucket = aws_s3_bucket.waf_acl_log.bucket
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = aws_kms_key.waf_acl.id
     }
   }
 }
+
 
 resource "aws_s3_bucket_public_access_block" "waf_acl_log" {
   bucket                  = aws_s3_bucket.waf_acl_log.bucket

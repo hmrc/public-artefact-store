@@ -11,7 +11,7 @@ locals {
 }
 
 module "bucket" {
-  source      = "git@github.com:hmrc/terraform-aws-s3-bucket-core?ref=1.2.0"
+  source      = "git@github.com:hmrc/terraform-aws-s3-bucket-core?ref=3.1.0"
   bucket_name = var.bucket_name
 
   log_bucket_id    = "build-${local.account_name}-access-logs"

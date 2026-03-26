@@ -2,9 +2,9 @@ terraform {
   required_version = "~> 1.14.8"
 
   backend "s3" {
-    key            = "public-artefact-store/v1/state"
-    region         = "eu-west-2"
-    use_lockfile   = true
+    key          = "public-artefact-store/v1/state"
+    region       = "eu-west-2"
+    use_lockfile = true
   }
 
   required_providers {
@@ -72,13 +72,13 @@ module "cloudfront_cdn" {
   name_prefix = module.label.id
   tags        = module.label.tags
 
-  web_acl_arn                       = module.cloudfront_waf.web_acl_arn
-  cloudfront_access_identity_path   = module.s3_bucket.cloudfront_access_identity_path
-  bucket_regional_domain_name       = module.s3_bucket.bucket_regional_domain_name
-  bucket_name                       = module.s3_bucket.bucket_name
-  domain_name                       = local.domain_name
-  acm_certificate_arn               = aws_acm_certificate_validation.cert.certificate_arn
-  viewer_request_function_arn       = module.cloudfront_default_indexes.function_arn
+  web_acl_arn                     = module.cloudfront_waf.web_acl_arn
+  cloudfront_access_identity_path = module.s3_bucket.cloudfront_access_identity_path
+  bucket_regional_domain_name     = module.s3_bucket.bucket_regional_domain_name
+  bucket_name                     = module.s3_bucket.bucket_name
+  domain_name                     = local.domain_name
+  acm_certificate_arn             = aws_acm_certificate_validation.cert.certificate_arn
+  viewer_request_function_arn     = module.cloudfront_default_indexes.function_arn
 
   providers = {
     aws           = aws
