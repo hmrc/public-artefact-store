@@ -43,7 +43,7 @@ resource "aws_cloudfront_distribution" "website" {
     }
 
     function_association {
-      event_type = "viewer-request"
+      event_type   = "viewer-request"
       function_arn = var.viewer_request_function_arn
     }
   }
@@ -75,10 +75,6 @@ resource "aws_cloudfront_distribution" "website" {
     error_code            = 403
     response_code         = 404
     response_page_path    = "/404.html"
-  }
-
-  logging_config {
-    bucket = module.cloudfront-logs.this_s3_bucket.bucket_domain_name
   }
 
   tags = var.tags

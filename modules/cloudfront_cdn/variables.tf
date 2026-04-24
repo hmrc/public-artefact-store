@@ -25,3 +25,7 @@ variable "tags" {
 variable "viewer_request_function_arn" {
   type = string
 }
+variable "cloudfront-region" {
+  type    = string
+  default = "us-east-1"
+}
