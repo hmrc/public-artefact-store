@@ -8,5 +8,6 @@ variable "domain_name" {
   type = string
 }
 variable "tags" {
-  type = map(string)
+  type    = map(string)
+  default = {}
 }
