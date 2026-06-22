@@ -37,6 +37,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "waf_acl_log_lifecycle" {
 resource "aws_s3_bucket_server_side_encryption_configuration" "waf_acl_log_bucket_sse" {
   bucket = aws_s3_bucket.waf_acl_log.bucket
   rule {
+    blocked_encryption_types = ["SSE-C"]
+    bucket_key_enabled       = false
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
       kms_master_key_id = aws_kms_key.waf_acl.id
@@ -242,3 +244,4 @@ resource "aws_kms_key" "waf_acl" {
   policy                  = data.aws_iam_policy_document.kms_policy.json
   tags                    = var.tags
 }
+

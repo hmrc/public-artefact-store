@@ -16,42 +16,57 @@ terraform {
   }
 }
 
+locals {
+  name_prefix = "mdtp-${terraform.workspace}-public-artefact-store"
+}
+
 
 provider "aws" {
   region = "eu-west-2"
+  default_tags {
+    tags = {
+      Namespace   = "mdtp"
+      Stage       = terraform.workspace
+      Name        = local.name_prefix
+      env         = terraform.workspace
+      managed-by  = "https://github.com/hmrc/public-artefact-store"
+      environment = terraform.workspace # Required by Prowler for KMS keys
+      team        = "build-and-deploy" # Required by Prowler for KMS keys
+      source      = "https://github.com/hmrc/public-artefact-store" # Required by Prowler for KMS keys
+      service     = "public-artefact-store" # Required by Prowler for KMS keys
+    }
+  }
 }
 
 provider "aws" {
   region = "us-east-1"
   alias  = "us_east_1"
-}
-
-module "label" {
-  source  = "cloudposse/label/terraform"
-  version = "0.8.0"
-
-  namespace = "mdtp"
-  stage     = terraform.workspace
-  name      = "public-artefact-store"
-
-  tags = {
-    env        = terraform.workspace
-    team       = "build-and-deploy"
-    managed-by = "https://github.com/hmrc/public-artefact-store"
+  default_tags {
+    tags = {
+      Namespace   = "mdtp"
+      Stage       = terraform.workspace
+      Name        = local.name_prefix
+      env         = terraform.workspace
+      managed-by  = "https://github.com/hmrc/public-artefact-store"
+      environment = terraform.workspace # Required by Prowler for KMS keys
+      team        = "build-and-deploy" # Required by Prowler for KMS keys
+      source      = "https://github.com/hmrc/public-artefact-store" # Required by Prowler for KMS keys
+      service     = "public-artefact-store" # Required by Prowler for KMS keys
+    }
   }
 }
 
+
 module "s3_bucket" {
   source      = "./modules/s3_bucket"
-  bucket_name = module.label.id
-  tags        = merge(module.label.tags, { "data_sensitivity" : "low" })
+  bucket_name = local.name_prefix
+  tags        = { "data_sensitivity" : "low" }
 
 }
 
 module "cloudfront_default_indexes" {
   source      = "./modules/cloudfront_default_indexes"
-  name_prefix = module.label.id
-  tags        = module.label.tags
+  name_prefix = local.name_prefix
   providers = {
     aws           = aws
     aws.us_east_1 = aws.us_east_1
@@ -62,8 +77,7 @@ module "cloudfront_default_indexes" {
 module "cloudfront_waf" {
   source = "./modules/cloudfront_waf"
 
-  name_prefix = module.label.id
-  tags        = module.label.tags
+  name_prefix               = local.name_prefix
 
   providers = {
     aws           = aws
@@ -74,8 +88,7 @@ module "cloudfront_waf" {
 module "cloudfront_cdn" {
   source = "./modules/cloudfront_cdn"
 
-  name_prefix = module.label.id
-  tags        = module.label.tags
+  name_prefix = local.name_prefix
 
   web_acl_arn                     = module.cloudfront_waf.web_acl_arn
   cloudfront_access_identity_path = module.s3_bucket.cloudfront_access_identity_path
@@ -95,8 +108,7 @@ module "cloudfront_cdn" {
 module "cloudfront_shield" {
   source = "./modules/cloudfront_shield"
 
-  name_prefix = module.label.id
-  tags        = module.label.tags
+  name_prefix = local.name_prefix
 
   cloudfront_distribution_arn = module.cloudfront_cdn.cloudfront_distribution_arn
   domain_name                 = local.domain_name
@@ -107,9 +119,8 @@ data "aws_secretsmanager_secret_version" "build_account_ids" {
 }
 
 module "share_cloudfront_distribution_id" {
-  source              = "./modules/share_secret"
-  secret_name         = "/shared-secret/${local.domain_name}/cloudfront_distribution_id"
-  secret_value        = module.cloudfront_cdn.cloudfront_distribution_id
-  tags                = module.label.tags
-  allowed_account_ids = jsondecode(data.aws_secretsmanager_secret_version.build_account_ids.secret_string)
+  source                    = "./modules/share_secret"
+  secret_name               = "/shared-secret/${local.domain_name}/cloudfront_distribution_id"
+  secret_value              = module.cloudfront_cdn.cloudfront_distribution_id
+  allowed_account_ids       = jsondecode(data.aws_secretsmanager_secret_version.build_account_ids.secret_string)
 }
