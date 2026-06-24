@@ -31,8 +31,8 @@ provider "aws" {
       env         = terraform.workspace
       managed-by  = "https://github.com/hmrc/public-artefact-store"
       environment = terraform.workspace # Required by Prowler for KMS keys
-      team        = "build-and-deploy" # Required by Prowler for KMS keys
-      source      = "https://github.com/hmrc/public-artefact-store" # Required by Prowler for KMS keys
+      Team        = "build-and-deploy" # Required by Prowler for KMS keys
+      Source      = "https://github.com/hmrc/public-artefact-store" # Required by Prowler for KMS keys
       service     = "public-artefact-store" # Required by Prowler for KMS keys
     }
   }
@@ -49,8 +49,8 @@ provider "aws" {
       env         = terraform.workspace
       managed-by  = "https://github.com/hmrc/public-artefact-store"
       environment = terraform.workspace # Required by Prowler for KMS keys
-      team        = "build-and-deploy" # Required by Prowler for KMS keys
-      source      = "https://github.com/hmrc/public-artefact-store" # Required by Prowler for KMS keys
+      Team        = "build-and-deploy" # Required by Prowler for KMS keys
+      Source      = "https://github.com/hmrc/public-artefact-store" # Required by Prowler for KMS keys
       service     = "public-artefact-store" # Required by Prowler for KMS keys
     }
   }
