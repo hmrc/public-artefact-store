@@ -27,7 +27,6 @@ provider "aws" {
       Namespace   = "mdtp"
       Stage       = terraform.workspace
       Name        = local.name_prefix
-      env         = terraform.workspace
       managed-by  = "https://github.com/hmrc/public-artefact-store"
       # Tags required by Prowler for KMS keys
       environment = terraform.workspace
@@ -49,7 +48,6 @@ provider "aws" {
       Namespace   = "mdtp"
       Stage       = terraform.workspace
       Name        = local.name_prefix
-      env         = terraform.workspace
       managed-by  = "https://github.com/hmrc/public-artefact-store"
       # Tags required by Prowler for KMS keys
       environment = terraform.workspace
