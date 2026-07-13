@@ -20,7 +20,6 @@ locals {
   name_prefix = "mdtp-${terraform.workspace}-public-artefact-store"
 }
 
-
 provider "aws" {
   region = "eu-west-2"
   default_tags {
@@ -30,10 +29,14 @@ provider "aws" {
       Name        = local.name_prefix
       env         = terraform.workspace
       managed-by  = "https://github.com/hmrc/public-artefact-store"
-      environment = terraform.workspace # Required by Prowler for KMS keys
-      team        = "build-and-deploy" # Required by Prowler for KMS keys
-      source      = "https://github.com/hmrc/public-artefact-store" # Required by Prowler for KMS keys
-      service     = "public-artefact-store" # Required by Prowler for KMS keys
+      # Tags required by Prowler for KMS keys
+      environment = terraform.workspace
+      team        = "build-and-deploy"
+      source      = "https://github.com/hmrc/public-artefact-store"
+      service     = "public-artefact-store"
+      # Tags required by Platsec tagging policy
+      Team        = "build-and-deploy"
+      Source      = "https://github.com/hmrc/public-artefact-store"
     }
   }
 }
@@ -48,10 +51,14 @@ provider "aws" {
       Name        = local.name_prefix
       env         = terraform.workspace
       managed-by  = "https://github.com/hmrc/public-artefact-store"
-      environment = terraform.workspace # Required by Prowler for KMS keys
-      team        = "build-and-deploy" # Required by Prowler for KMS keys
-      source      = "https://github.com/hmrc/public-artefact-store" # Required by Prowler for KMS keys
-      service     = "public-artefact-store" # Required by Prowler for KMS keys
+      # Tags required by Prowler for KMS keys
+      environment = terraform.workspace
+      team        = "build-and-deploy"
+      source      = "https://github.com/hmrc/public-artefact-store"
+      service     = "public-artefact-store"
+      # Tags required by Platsec tagging policy
+      Team        = "build-and-deploy"
+      Source      = "https://github.com/hmrc/public-artefact-store"
     }
   }
 }
