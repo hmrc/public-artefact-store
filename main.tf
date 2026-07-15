@@ -30,12 +30,9 @@ provider "aws" {
       managed-by  = "https://github.com/hmrc/public-artefact-store"
       # Tags required by Prowler for KMS keys
       environment = terraform.workspace
-      team        = "build-and-deploy"
-      source      = "https://github.com/hmrc/public-artefact-store"
+      team        = "build-and-deploy" # This tag is also required by Platsec for all resources
+      source      = "https://github.com/hmrc/public-artefact-store" # This tag is also required by Platsec for all resources
       service     = "public-artefact-store"
-      # Tags required by Platsec tagging policy
-      Team        = "build-and-deploy"
-      Source      = "https://github.com/hmrc/public-artefact-store"
     }
   }
 }
@@ -51,12 +48,9 @@ provider "aws" {
       managed-by  = "https://github.com/hmrc/public-artefact-store"
       # Tags required by Prowler for KMS keys
       environment = terraform.workspace
-      team        = "build-and-deploy"
-      source      = "https://github.com/hmrc/public-artefact-store"
+      team        = "build-and-deploy" # This tag is also required by Platsec for all resources
+      source      = "https://github.com/hmrc/public-artefact-store" # This tag is also required by Platsec for all resources
       service     = "public-artefact-store"
-      # Tags required by Platsec tagging policy
-      Team        = "build-and-deploy"
-      Source      = "https://github.com/hmrc/public-artefact-store"
     }
   }
 }
