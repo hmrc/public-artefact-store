@@ -1,6 +1,9 @@
 resource "aws_s3_bucket" "waf_acl_log" {
   bucket = "${var.name_prefix}-waf-acl-logs"
-  tags   = var.tags
+  tags   = merge(var.tags, {
+    data_sensitivity = "low",
+    data_expiry      = "1-month"
+  })
 }
 
 resource "aws_s3_bucket_ownership_controls" "waf_acl_log_bucket_ownership_controls" {
