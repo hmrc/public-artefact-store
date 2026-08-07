@@ -38,6 +38,16 @@ data "aws_iam_policy_document" "firehose_principal" {
     }
     condition {
       test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+    condition {
+      test     = "ArnLike"
+      variable = "aws:SourceArn"
+      values   = ["arn:aws:firehose:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*"]
+    }
+    condition {
+      test     = "StringEquals"
       variable = "sts:ExternalId"
       values = [
         data.aws_caller_identity.current.account_id
