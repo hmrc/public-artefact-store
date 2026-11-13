@@ -45,6 +45,7 @@ resource "aws_secretsmanager_secret_version" "secret" {
 
 resource "aws_kms_key" "secret_manager" {
   count                   = local.cross_account ? 1 : 0
+  enable_key_rotation     = true
   description             = "secrets manager ${var.secret_name}"
   deletion_window_in_days = 7
   policy                  = data.aws_iam_policy_document.kms_policy.json
