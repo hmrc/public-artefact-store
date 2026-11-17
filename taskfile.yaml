@@ -1,7 +1,8 @@
 version: '3'
 
 tasks:
-  clean:
+  cleantf:
+    desc: Removes the .terraform folder
     cmds:
       - rm -rf .terraform
     ignore_error: true
@@ -11,22 +12,15 @@ tasks:
       - rm .env
     ignore_error: true
 
-  init-lab03:
-    desc: Runs terraform init for lab03
+  initenv-*:
+    desc: Runs terraform init for an environment (lab03 or live)
+    vars:
+      WORKSPACE: '{{index .MATCH 0}}'
     cmds:
       - task: init
         vars:
-          WORKSPACE: lab03
-          BUCKET_ENV: labs
-      
-
-  init-live:
-    desc: Runs terraform init for live
-    cmds:
-      - task: init
-        vars:
-          WORKSPACE: live
-          BUCKET_ENV: live
+          WORKSPACE: '{{ .WORKSPACE }}'
+          BUCKET_ENV: '{{if eq .WORKSPACE "lab03"}}labs{{else}}{{ .WORKSPACE }}{{end}}'
 
   init:
     dotenv: ['.env']
@@ -37,7 +31,7 @@ tasks:
         - name: BUCKET_ENV
           enum: [labs, live]
     cmds:
-      - task: clean
+      - task: cleantf
       - terraform init -backend-config="bucket=mdtp-terraform-public-artefact-store-{{ .BUCKET_ENV }}"
       - terraform workspace select {{ .WORKSPACE }}
 
@@ -48,11 +42,11 @@ tasks:
       PLANENV: '{{index .MATCH 0}}'
     cmds:
       - task: clear_env
-      - task: init-{{ .PLANENV }}
+      - task: initenv-{{ .PLANENV }}
       - terraform plan -out={{ .PLANENV }}-terraform.plan -lock-timeout=30s
 
   applytf-*:
-    desc: Runs a terraform plan/apply (lab03/live)
+    desc: Runs a terraform apply (lab03/live)
     dotenv: ['.env']
     vars:
       APPLYENV: '{{index .MATCH 0}}'
