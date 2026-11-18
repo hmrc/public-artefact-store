@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.14.8"
+  required_version = "~> 1.17.2"
 
   backend "s3" {
     key          = "public-artefact-store/v1/state"
@@ -8,10 +8,10 @@ terraform {
   }
 
   required_providers {
-    aws = ">= 6.37.0"
+    aws = ">= 6.73.0"
     archive = {
       source  = "hashicorp/archive"
-      version = "2.7.1"
+      version = "2.8.1"
     }
   }
 }
