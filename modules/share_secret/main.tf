@@ -5,7 +5,7 @@ terraform {
 locals {
   cross_account        = length(var.allowed_account_ids) > 0 ? true : false
   allowed_account_arns = formatlist("arn:aws:iam::%s:root", var.allowed_account_ids)
-  cross_account_policy_document = local.cross_account ? one(data.aws_iam_policy_document.cross_account).json : ""
+  cross_account_policy_document = local.cross_account ? data.aws_iam_policy_document.cross_account[0].json : ""
 }
 
 data "aws_caller_identity" "current" {}
@@ -14,7 +14,7 @@ resource "aws_secretsmanager_secret" "secret" {
   name       = var.secret_name
   kms_key_id = local.cross_account ? one(aws_kms_key.secret_manager).arn : null
   tags       = var.tags
-  policy     = local.cross_account ? one(data.aws_iam_policy_document.secret_policy).json : null
+  policy     = local.cross_account ? data.aws_iam_policy_document.secret_policy[0].json : null
 
   recovery_window_in_days = 0 //this allows recreation of the secret right away
 }
